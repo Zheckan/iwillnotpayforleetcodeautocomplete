@@ -71,7 +71,7 @@ python3 problems/{difficulty}/{XXXX-problem-name}/solution.py
 
 # 5. Commit
 git add problems/{difficulty}/{XXXX-problem-name}
-git commit -m "Add solution for problem #{number}: {Problem Name}"
+git commit -m "Add solution for problem #XXXX: Problem Name"
 ```
 
 ## 💡 Why This Structure?

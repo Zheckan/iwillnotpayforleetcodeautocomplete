@@ -121,8 +121,8 @@ Explanation: [explanation if provided]
 
 2. **Create the problem directory:**
    ```bash
-   mkdir -p problems/{difficulty}/{number}-{problem-name}
-   cd problems/{difficulty}/{number}-{problem-name}
+   mkdir -p problems/{difficulty}/{XXXX-problem-name}
+   cd problems/{difficulty}/{XXXX-problem-name}
    ```
 
 3. **Create README.md** using the template above
@@ -131,8 +131,8 @@ Explanation: [explanation if provided]
 
 5. **Commit with a descriptive message:**
    ```bash
-   git add problems/{difficulty}/{number}-{problem-name}
-   git commit -m "Add solution for problem #{number}: {Problem Name}"
+   git add problems/{difficulty}/{XXXX-problem-name}
+   git commit -m "Add solution for problem #XXXX: Problem Name"
    ```
 
 ## Best Practices
