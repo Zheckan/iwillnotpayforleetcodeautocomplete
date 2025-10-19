@@ -15,13 +15,28 @@ mkdir -p problems/medium/XXXX-problem-name
 mkdir -p problems/hard/XXXX-problem-name
 ```
 
+**Shortcut:**
+
+```bash
+scripts/create-problem.sh easy 1 "Two Sum"
+```
+
+By default the script uses the TypeScript template. Omit `-l` to accept the prompt or press Enter to keep TypeScript.
+
+```bash
+scripts/create-problem.sh -l py medium 3 "Longest Substring"
+```
+
 ### 2. Copy Templates
 
 ```bash
 # Copy the README template
 cp .templates/problem-template/README.md problems/{difficulty}/{XXXX-problem-name}/
 
-# Copy your preferred language template
+# Copy your preferred language template (default TypeScript)
+# (The helper script above performs these copies automatically.)
+cp .templates/problem-template/solution.ts problems/{difficulty}/{XXXX-problem-name}/
+# or
 cp .templates/problem-template/solution.py problems/{difficulty}/{XXXX-problem-name}/
 # or
 cp .templates/problem-template/solution.js problems/{difficulty}/{XXXX-problem-name}/
@@ -38,11 +53,13 @@ cp .templates/problem-template/solution.cpp problems/{difficulty}/{XXXX-problem-
 ### 4. Test Your Solution
 
 ```bash
+# For TypeScript/JavaScript (with Node.js)
+ts-node problems/{difficulty}/{XXXX-problem-name}/solution.ts
+# or
+node problems/{difficulty}/{XXXX-problem-name}/solution.js
+
 # For Python
 python3 problems/{difficulty}/{XXXX-problem-name}/solution.py
-
-# For JavaScript (with Node.js)
-node problems/{difficulty}/{XXXX-problem-name}/solution.js
 
 # For C++
 g++ problems/{difficulty}/{XXXX-problem-name}/solution.cpp -o /tmp/solution
