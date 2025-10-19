@@ -26,8 +26,6 @@ cp .templates/problem-template/solution.py problems/{difficulty}/{XXXX-problem-n
 # or
 cp .templates/problem-template/solution.js problems/{difficulty}/{XXXX-problem-name}/
 # or
-cp .templates/problem-template/solution.java problems/{difficulty}/{XXXX-problem-name}/
-# or
 cp .templates/problem-template/solution.cpp problems/{difficulty}/{XXXX-problem-name}/
 ```
 
@@ -45,10 +43,6 @@ python3 problems/{difficulty}/{XXXX-problem-name}/solution.py
 
 # For JavaScript (with Node.js)
 node problems/{difficulty}/{XXXX-problem-name}/solution.js
-
-# For Java
-javac problems/{difficulty}/{XXXX-problem-name}/solution.java
-java -cp problems/{difficulty}/{XXXX-problem-name} Solution
 
 # For C++
 g++ problems/{difficulty}/{XXXX-problem-name}/solution.cpp -o /tmp/solution
@@ -84,19 +78,6 @@ Each problem folder:
 ├── README.md      # Problem description, examples, constraints
 └── solution.{ext} # Your solution in any language
 ```
-
-## Supported Languages
-
-| Language | File Extension | Template Available |
-|----------|---------------|-------------------|
-| Python | `.py` | ✅ |
-| JavaScript | `.js` | ✅ |
-| Java | `.java` | ✅ |
-| C++ | `.cpp` | ✅ |
-| TypeScript | `.ts` | Add your own |
-| Go | `.go` | Add your own |
-| Rust | `.rs` | Add your own |
-| C# | `.cs` | Add your own |
 
 ## Tips
 
