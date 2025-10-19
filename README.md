@@ -1,6 +1,8 @@
 # iwillnotpayforleetcodeautocomplete
 
-Place to store solved LeetCode problems with an organized structure. Since LeetCode doesn't even have autocomplete on the free tier, this repository provides a better development experience with your favorite IDE!
+Place to store solved LeetCode problems with an organized structure. Since LeetCode doesn't even have autocomplete on the free tier, and this is bs
+
+## // Rest is just AI generaled structure info, idk about it and will probably delete it in future
 
 ## 📁 Repository Structure
 
