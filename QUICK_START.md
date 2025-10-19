@@ -19,16 +19,16 @@ mkdir -p problems/hard/XXXX-problem-name
 
 ```bash
 # Copy the README template
-cp .templates/problem-template/README.md problems/{difficulty}/{number}-{name}/
+cp .templates/problem-template/README.md problems/{difficulty}/{XXXX-problem-name}/
 
 # Copy your preferred language template
-cp .templates/problem-template/solution.py problems/{difficulty}/{number}-{name}/
+cp .templates/problem-template/solution.py problems/{difficulty}/{XXXX-problem-name}/
 # or
-cp .templates/problem-template/solution.js problems/{difficulty}/{number}-{name}/
+cp .templates/problem-template/solution.js problems/{difficulty}/{XXXX-problem-name}/
 # or
-cp .templates/problem-template/solution.java problems/{difficulty}/{number}-{name}/
+cp .templates/problem-template/solution.java problems/{difficulty}/{XXXX-problem-name}/
 # or
-cp .templates/problem-template/solution.cpp problems/{difficulty}/{number}-{name}/
+cp .templates/problem-template/solution.cpp problems/{difficulty}/{XXXX-problem-name}/
 ```
 
 ### 3. Fill in the Templates
@@ -41,24 +41,24 @@ cp .templates/problem-template/solution.cpp problems/{difficulty}/{number}-{name
 
 ```bash
 # For Python
-python3 problems/{difficulty}/{number}-{name}/solution.py
+python3 problems/{difficulty}/{XXXX-problem-name}/solution.py
 
 # For JavaScript (with Node.js)
-node problems/{difficulty}/{number}-{name}/solution.js
+node problems/{difficulty}/{XXXX-problem-name}/solution.js
 
 # For Java
-javac problems/{difficulty}/{number}-{name}/solution.java
-java -cp problems/{difficulty}/{number}-{name} Solution
+javac problems/{difficulty}/{XXXX-problem-name}/solution.java
+java -cp problems/{difficulty}/{XXXX-problem-name} Solution
 
 # For C++
-g++ problems/{difficulty}/{number}-{name}/solution.cpp -o /tmp/solution
+g++ problems/{difficulty}/{XXXX-problem-name}/solution.cpp -o /tmp/solution
 /tmp/solution
 ```
 
 ### 5. Commit Your Solution
 
 ```bash
-git add problems/{difficulty}/{number}-{name}
+git add problems/{difficulty}/{XXXX-problem-name}
 git commit -m "Add solution for problem #{number}: {Problem Name}"
 git push
 ```
