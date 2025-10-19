@@ -24,29 +24,29 @@ scripts/create-problem.sh easy 1 "Two Sum"
 By default the script uses the TypeScript template. Omit `-l` to accept the prompt or press Enter to keep TypeScript.
 
 ```bash
-scripts/create-problem.sh -l py medium 3 "Longest Substring"
+scripts/create-problem.sh -l py -t "Hash Table,Array" -u https://leetcode.com/problems/two-sum/ easy 1 "Two Sum"
 ```
 
 ### 2. Copy Templates
 
 ```bash
-# Copy the README template
-cp .templates/problem-template/README.md problems/{difficulty}/{XXXX-problem-name}/
+# Copy the problem template
+cp .templates/problem-template/README.md problems/{difficulty}/{XXXX-problem-name}/README.md
 
 # Copy your preferred language template (default TypeScript)
-# (The helper script above performs these copies automatically.)
-cp .templates/problem-template/solution.ts problems/{difficulty}/{XXXX-problem-name}/
+# (The helper script above performs these copies automatically and fills metadata.)
+cp .templates/problem-template/solution.ts problems/{difficulty}/{XXXX-problem-name}/solution.ts
 # or
-cp .templates/problem-template/solution.py problems/{difficulty}/{XXXX-problem-name}/
+cp .templates/problem-template/solution.py problems/{difficulty}/{XXXX-problem-name}/solution.py
 # or
-cp .templates/problem-template/solution.js problems/{difficulty}/{XXXX-problem-name}/
+cp .templates/problem-template/solution.js problems/{difficulty}/{XXXX-problem-name}/solution.js
 # or
-cp .templates/problem-template/solution.cpp problems/{difficulty}/{XXXX-problem-name}/
+cp .templates/problem-template/solution.cpp problems/{difficulty}/{XXXX-problem-name}/solution.cpp
 ```
 
 ### 3. Fill in the Templates
 
-- Edit `README.md` with problem description from LeetCode
+- Edit `README.md` with the full problem description, examples, and constraints
 - Edit `solution.{ext}` with your code
 - Add test cases to verify your solution
 
