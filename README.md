@@ -46,7 +46,9 @@ problems/
 
 ## 📝 Adding New Problems
 
-See [CONTRIBUTING.md](CONTRIBUTING.md) for detailed guidelines on:
+**Quick Start:** See [QUICK_START.md](QUICK_START.md) for a quick reference guide
+
+**Detailed Guide:** See [CONTRIBUTING.md](CONTRIBUTING.md) for comprehensive guidelines on:
 - Folder structure and naming conventions
 - README template for problem descriptions
 - Multiple language support
@@ -55,14 +57,20 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for detailed guidelines on:
 ### Quick Add
 
 ```bash
-# Create a new problem directory
-mkdir -p problems/{difficulty}/{number}-{problem-name}
+# 1. Create problem directory
+mkdir -p problems/{difficulty}/{XXXX-problem-name}
 
-# Add README.md with problem description
-# Add solution.{ext} with your code
+# 2. Copy templates
+cp .templates/problem-template/README.md problems/{difficulty}/{XXXX-problem-name}/
+cp .templates/problem-template/solution.py problems/{difficulty}/{XXXX-problem-name}/
 
-# Commit your solution
-git add problems/{difficulty}/{number}-{problem-name}
+# 3. Edit files with problem description and solution
+
+# 4. Test your solution
+python3 problems/{difficulty}/{XXXX-problem-name}/solution.py
+
+# 5. Commit
+git add problems/{difficulty}/{XXXX-problem-name}
 git commit -m "Add solution for problem #{number}: {Problem Name}"
 ```
 
@@ -84,6 +92,7 @@ Check out these example problems to see the structure in action:
 ## 📚 Resources
 
 - [LeetCode](https://leetcode.com/) - Original problem source
+- [QUICK_START.md](QUICK_START.md) - Quick reference for adding problems
 - [CONTRIBUTING.md](CONTRIBUTING.md) - Detailed contribution guidelines
 
 ## 🤝 Contributing
