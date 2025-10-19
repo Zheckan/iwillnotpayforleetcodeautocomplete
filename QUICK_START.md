@@ -59,7 +59,7 @@ g++ problems/{difficulty}/{XXXX-problem-name}/solution.cpp -o /tmp/solution
 
 ```bash
 git add problems/{difficulty}/{XXXX-problem-name}
-git commit -m "Add solution for problem #{number}: {Problem Name}"
+git commit -m "Add solution for problem #XXXX: Problem Name"
 git push
 ```
 
