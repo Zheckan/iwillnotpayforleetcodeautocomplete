@@ -12,7 +12,9 @@ function insert(head: ListNode | null, val: number): ListNode {
   if (head === null) return new ListNode(val);
   let temp: ListNode = head;
   while (temp.next !== null) temp = temp.next;
+
   temp.next = new ListNode(val);
+
   return head;
 }
 
