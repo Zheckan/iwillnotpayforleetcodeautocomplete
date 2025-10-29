@@ -8,22 +8,21 @@ class ListNode {
 }
 
 // Insert function
-function insert(head: ListNode, val: number): ListNode {
+function insert(head: ListNode | null, val: number): ListNode {
+  if (head === null) return new ListNode(val);
   let temp: ListNode = head;
   while (temp.next !== null) temp = temp.next;
-
   temp.next = new ListNode(val);
-
   return head;
 }
 
 // Delete function
-function deleteNode(head: ListNode, val: number): ListNode {
-  let temp: ListNode = head;
-  while (temp.next !== null && temp.next.val !== val) temp = temp.next;
-
-  if (temp.next !== null) temp.next = temp.next.next;
-
+function deleteNode(head: ListNode | null, val: number): ListNode | null {
+  if (head === null) return null;
+  if (head.val === val) return head.next;
+  let prev: ListNode = head;
+  while (prev.next !== null && prev.next.val !== val) prev = prev.next;
+  if (prev.next !== null) prev.next = prev.next.next;
   return head;
 }
 

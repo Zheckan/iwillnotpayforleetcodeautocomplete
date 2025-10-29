@@ -1,3 +1,5 @@
+export {};
+
 const array: number[] = [5, 3, 8, 4, 2, 7, 1, 6, 9, 0, 10];
 
 function mergeSort(array: number[]): number[] {

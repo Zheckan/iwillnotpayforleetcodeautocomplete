@@ -11,21 +11,27 @@ class Tree {
 }
 
 function dfs(tree: Tree | null, value: number) {
-  if (tree === null) return;
-  if (tree.current === value) return tree;
-  if (tree.current < value) return dfs(tree.right!, value);
-  if (tree.current > value) return dfs(tree.left!, value);
+  if (tree === null) return null;
+  const stack: (Tree | null)[] = [tree];
+  while (stack.length > 0) {
+    const current = stack.pop();
+    if (current === null || current === undefined) continue;
+    if (current.current === value) return current;
+    if (current.right) stack.push(current.right);
+    if (current.left) stack.push(current.left);
+  }
   return null;
 }
 
 function bfs(tree: Tree | null, value: number) {
+  if (tree === null) return null;
   const queue: (Tree | null)[] = [tree];
   while (queue.length > 0) {
     const current = queue.shift();
     if (current === null || current === undefined) continue;
     if (current.current === value) return current;
-    if (current.current < value) queue.push(current.right);
-    if (current.current > value) queue.push(current.left);
+    if (current.left) queue.push(current.left);
+    if (current.right) queue.push(current.right);
   }
   return null;
 }
