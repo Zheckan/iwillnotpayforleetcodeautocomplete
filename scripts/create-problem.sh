@@ -2,26 +2,21 @@
 set -euo pipefail
 
 usage() {
-    cat <<USAGE
-Usage: $0 [-l language] [-t topics] [-u url] <difficulty> <problem-number> <problem-title>
+    cat <<'USAGE'
+Usage: $0 [-l language] [-h] <problem-title>
 
-Create a new problem folder from templates.
+Create a new problem folder by fetching metadata directly from LeetCode.
 
 Arguments:
-  difficulty       Problem difficulty: easy, medium, or hard.
-  problem-number   LeetCode problem number (e.g., 1, 42, 1234).
-  problem-title    Problem title in quotes (e.g., "Two Sum").
+  problem-title    Full LeetCode problem title in quotes (e.g., "Two Sum").
 
 Options:
-  -l language      Solution language to use (default: ts). Choices are read
-                   from available templates.
-  -t topics        Comma-separated list of topics to pre-fill.
-  -u url           LeetCode problem URL to pre-fill.
+  -l language      Solution language template to copy (default: ts).
   -h               Show this help message.
 
 Examples:
-  $0 easy 1 "Two Sum"
-  $0 -l py -t "Hash Table,Array" medium 3 "Longest Substring Without Repeating Characters"
+  $0 "Two Sum"
+  $0 -l py "Binary Tree Level Order Traversal"
 USAGE
 }
 
@@ -30,41 +25,12 @@ die() {
     exit 1
 }
 
-normalize_topics() {
-    local input="$1"
-    if [[ -z "$input" ]]; then
-        printf 'Topic1, Topic2, Topic3'
-        return
-    fi
-
-    local IFS=','
-    read -ra parts <<< "$input"
-    local trimmed_parts=()
-    local part trimmed
-    for part in "${parts[@]}"; do
-        trimmed=$(printf '%s' "$part" | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//')
-        if [[ -n "$trimmed" ]]; then
-            trimmed_parts+=("$trimmed")
-        fi
-    done
-
-    if [[ ${#trimmed_parts[@]} -eq 0 ]]; then
-        printf 'Topic1, Topic2, Topic3'
-        return
-    fi
-
-    local joined="${trimmed_parts[0]}"
-    for part in "${trimmed_parts[@]:1}"; do
-        joined+=", $part"
-    done
-
-    printf '%s' "$joined"
-}
-
-TEMPLATES_DIR=".templates/problem-template"
+SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
+REPO_ROOT=$(cd "$SCRIPT_DIR/.." && pwd)
+TEMPLATES_DIR="$REPO_ROOT/.templates/problem-template"
 LANG_TEMPLATE="solution"
-PROBLEM_TEMPLATE="README.md"
 DEFAULT_LANG="ts"
+TS_HELPER="$REPO_ROOT/scripts/fetch-leetcode-problem.ts"
 
 available_languages=()
 for template in "$TEMPLATES_DIR"/${LANG_TEMPLATE}.*; do
@@ -78,19 +44,11 @@ if [[ ${#available_languages[@]} -eq 0 ]]; then
 fi
 
 language=""
-topics=""
-url=""
 
-while getopts ":l:t:u:h" opt; do
+while getopts ":l:h" opt; do
     case "$opt" in
         l)
             language="${OPTARG,,}"
-            ;;
-        t)
-            topics="${OPTARG}"
-            ;;
-        u)
-            url="${OPTARG}"
             ;;
         h)
             usage
@@ -106,7 +64,7 @@ while getopts ":l:t:u:h" opt; do
 done
 shift $((OPTIND - 1))
 
-if [[ $# -lt 3 ]]; then
+if [[ $# -lt 1 ]]; then
     usage
     exit 1
 fi
@@ -122,91 +80,161 @@ if [[ -z "$language" ]]; then
     fi
 fi
 
-difficulty="${1,,}"
-problem_number="$2"
-shift 2
-title="$*"
-
-case "$difficulty" in
-    easy|medium|hard) ;;
-    *) die "Unsupported difficulty: $difficulty" ;;
-esac
-
-if ! [[ "$problem_number" =~ ^[0-9]+$ ]]; then
-    die "Problem number must be numeric."
-fi
-
-padded_number=$(printf "%04d" "$problem_number")
-slug=$(echo "$title" \
-    | tr '[:upper:]' '[:lower:]' \
-    | sed -e 's/[+]/ plus /g' \
-          -e 's/[^a-z0-9]/-/g' \
-          -e 's/--\+/-/g' \
-          -e 's/^-//' \
-          -e 's/-$//')
-
-if [[ -z "$slug" ]]; then
-    die "Could not derive slug from title: $title"
-fi
-
-if [[ -z "$url" ]]; then
-    url="https://leetcode.com/problems/$slug/"
-fi
-
 language_template_path="$TEMPLATES_DIR/${LANG_TEMPLATE}.${language}"
-problem_template_path="$TEMPLATES_DIR/$PROBLEM_TEMPLATE"
-
 if [[ ! -f "$language_template_path" ]]; then
     die "Template not found for language '$language': $language_template_path"
 fi
 
-if [[ ! -f "$problem_template_path" ]]; then
-    die "Problem template not found: $problem_template_path"
+if [[ ! -f "$TS_HELPER" ]]; then
+    die "Helper script not found: $TS_HELPER"
 fi
 
-target_dir="problems/$difficulty/${padded_number}-${slug}"
+if ! command -v bun >/dev/null 2>&1; then
+    die "bun is required to run the TypeScript helper script."
+fi
+
+title="$*"
+
+problem_json=""
+if ! problem_json="$(PROBLEM_LANG="$language" bun "$TS_HELPER" "$title")"; then
+    die "Failed to fetch problem data for: $title"
+fi
+
+export PROBLEM_JSON="$problem_json"
+
+metadata=$(python3 - <<'PY'
+import json
+import os
+
+data = json.loads(os.environ["PROBLEM_JSON"])
+
+fields = {
+    "title": data["title"],
+    "slug": data["slug"],
+    "frontend_id": data["frontendId"],
+    "padded_frontend_id": data["paddedFrontendId"],
+    "difficulty_label": data["difficulty"]["label"],
+    "difficulty_lower": data["difficulty"]["lower"],
+    "topics_line": data.get("topicsLine", ""),
+    "url": data["url"],
+    "target_dir_name": data["targetFolderName"],
+}
+
+for key, value in fields.items():
+    print(f"{key}={value}")
+PY
+)
+
+declare fetched_title slug frontend_id padded_frontend_id difficulty_label difficulty_lower topics_line url target_dir_name
+while IFS='=' read -r key value; do
+    case "$key" in
+        title) fetched_title="$value" ;;
+        slug) slug="$value" ;;
+        frontend_id) frontend_id="$value" ;;
+        padded_frontend_id) padded_frontend_id="$value" ;;
+        difficulty_label) difficulty_label="$value" ;;
+        difficulty_lower) difficulty_lower="$value" ;;
+        topics_line) topics_line="$value" ;;
+        url) url="$value" ;;
+        target_dir_name) target_dir_name="$value" ;;
+    esac
+done <<< "$metadata"
+
+if [[ -z "${fetched_title:-}" || -z "${target_dir_name:-}" ]]; then
+    die "Failed to parse problem metadata. Raw metadata: $metadata"
+fi
+
+target_dir_rel="problems/$difficulty_lower/$target_dir_name"
+target_dir="$REPO_ROOT/$target_dir_rel"
 
 if [[ -d "$target_dir" ]]; then
-    die "Target directory already exists: $target_dir"
+    die "Target directory already exists: $target_dir_rel"
 fi
 
-mkdir -p "$target_dir"
+mkdir -p "$(dirname "$target_dir")"
+mkdir "$target_dir"
 
-number_title_heading="# $problem_number. $title"
-difficulty_capitalized="${difficulty^}"
-topics_formatted=$(normalize_topics "$topics")
-
-python3 - "$problem_template_path" "$target_dir/README.md" \
-    "$number_title_heading" \
-    "$difficulty_capitalized" \
-    "$topics_formatted" \
-    "$url" <<'PY'
+python3 - "$target_dir/README.md" <<'PY'
+import json
+import os
 import sys
 from pathlib import Path
 
-if len(sys.argv) != 7:
-    sys.stderr.write("Expected 6 arguments for template population\n")
-    sys.exit(1)
+data = json.loads(os.environ["PROBLEM_JSON"])
+readme_content = data.get("readmeContent")
 
-template_path, output_path, heading, difficulty, topics, url = sys.argv[1:7]
-content = Path(template_path).read_text(encoding="utf-8")
-replacements = {
-    "# [Problem Number]. [Problem Title]": heading,
-    "**Difficulty:** [Easy/Medium/Hard]": f"**Difficulty:** {difficulty}",
-    "**Topics:** [Topic1, Topic2, Topic3]": f"**Topics:** {topics}",
-    "**Link:** [LeetCode problem URL]": f"**Link:** {url}",
-}
-for src, dst in replacements.items():
-    content = content.replace(src, dst)
-Path(output_path).write_text(content, encoding="utf-8")
+if not isinstance(readme_content, str) or not readme_content.strip():
+    raise SystemExit("readmeContent missing from helper output")
+
+Path(sys.argv[1]).write_text(readme_content, encoding="utf-8")
 PY
 
-cp "$language_template_path" "$target_dir/${LANG_TEMPLATE}.${language}"
+solution_target="$target_dir/${LANG_TEMPLATE}.${language}"
+export SOLUTION_TARGET="$solution_target"
 
-echo "Created $target_dir"
-echo "Copied templates: README.md and ${LANG_TEMPLATE}.${language}"
+starter_source=$(SOLUTION_LANGUAGE="$language" python3 - "$solution_target" "$language_template_path" <<'PY'
+import json
+import os
+import sys
+from pathlib import Path
 
+data = json.loads(os.environ["PROBLEM_JSON"])
+target_path = Path(sys.argv[1])
+template_path = Path(sys.argv[2])
+
+starter = data.get("starterCode")
+code = None
+starter_lang_slug = ""
+starter_lang_name = ""
+if isinstance(starter, dict):
+    code = starter.get("code")
+    starter_lang_slug = str(starter.get("langSlug") or "").lower()
+    starter_lang_name = str(starter.get("lang") or "").lower()
+
+if isinstance(code, str) and code.strip():
+    normalized = code.replace("\r\n", "\n")
+    if not normalized.endswith("\n"):
+        normalized += "\n"
+    target_path.write_text(normalized, encoding="utf-8")
+    result = "snippet"
+else:
+    target_path.write_text(template_path.read_text(encoding="utf-8"), encoding="utf-8")
+    result = "template"
+
+print(result, end="")
+PY
+)
+
+python3 - <<'PY'
+import json
+import os
+from pathlib import Path
+
+data = json.loads(os.environ["PROBLEM_JSON"])
+target_path = Path(os.environ["SOLUTION_TARGET"])
+harness = data.get("testHarness") or {}
+code = harness.get("code")
+
+if isinstance(code, str) and code.strip():
+    existing = target_path.read_text(encoding="utf-8") if target_path.exists() else ""
+    if not existing.endswith("\n"):
+        existing += "\n"
+    updated = existing + "\n" + code.rstrip() + "\n"
+    target_path.write_text(updated, encoding="utf-8")
+PY
+
+echo "Created $target_dir_rel"
+echo "Problem: $frontend_id. $fetched_title ($difficulty_label)"
+if [[ -n "${topics_line:-}" ]]; then
+    echo "Topics: $topics_line"
+fi
+echo "Link: $url"
+if [[ "$starter_source" == "snippet" ]]; then
+    echo "Starter code: Imported from LeetCode (${language})"
+else
+    echo "Starter code: Copied template ${LANG_TEMPLATE}.${language}"
+fi
 echo "Next steps:"
-echo "  - Fill in $target_dir/README.md with problem details"
-echo "  - Implement the solution in $target_dir/${LANG_TEMPLATE}.${language}"
+echo "  - Review and refine $target_dir_rel/README.md"
+echo "  - Implement the solution in $target_dir_rel/${LANG_TEMPLATE}.${language}"
 echo "  - Add tests within the solution file"
