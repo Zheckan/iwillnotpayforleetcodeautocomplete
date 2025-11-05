@@ -4,157 +4,155 @@ const string =
   `Then, use the API methods to manipulate the string. ` +
   `Finally, print the result to the console.`;
 
-// at: obviously does what you think it does
-console.log('at: ', string.at(0), typeof string.at(0));
+// at: access character at index, supports negative indices (unlike charAt)
+console.log('at: ', string.at(0), string.at(-1), typeof string.at(0));
 
-// charAt: same as at, but does not accept negative indices
-console.log('charAt: ', string.charAt(0), typeof string.charAt(0));
+// charAt: access character at index, does not support negative indices
+console.log('charAt: ', string.charAt(0), string.charAt(5), typeof string.charAt(0));
 
-// charCodeAt: returns UTF-16 code unit (0-65535), does not accept negative indices
-console.log('charCodeAt: ', string.charCodeAt(0), typeof string.charCodeAt(0));
+// charCodeAt: returns UTF-16 code unit value (0-65535) for character at index
+console.log('charCodeAt: ', string.at(0), ' -> ', string.charCodeAt(0), `, 'A' is ${'A'.charCodeAt(0)}`);
 
-// codePointAt: returns Unicode code point (can exceed 65535 for characters outside Basic Multilingual Plane)
-// does not accept negative indices
-console.log('codePointAt: ', string.codePointAt(0), typeof string.codePointAt(0));
+// codePointAt: returns Unicode code point (can exceed 65535 for special characters)
+console.log('codePointAt: ', string.at(0), ' -> ', string.codePointAt(0), `emoji '😀' is ${'😀'.codePointAt(0)}`);
 
-// concat: concatenates given string to the end of current string, but does not mutate original string
-const concatString = 'Hello, world!';
-console.log('concat: ', concatString.concat(' This is concatenated string.'), 'Result:', concatString);
-// can accept multiple arguments: {string1, string2, ...strings} -> string1.concat(string2, ...strings) or string1.concat(...strings)
+// concat: concatenates strings without mutating original
+const concatString = 'Hello';
+const concatenated = concatString.concat(', ', 'world', '!');
+console.log('concat: ', `'${concatString}' + ', world!' = '${concatenated}'`);
 
-// endsWith: checks if string ends with given substring
-const endsWithString = '!';
+// endsWith: checks if string ends with substring
 console.log(
-  `endsWith: '${concatString}' is ending with '${endsWithString}'? -> ${concatString.endsWith(endsWithString)}`,
-); // endPosition is optional, setting up end position of a string, so not full string is checked.
-
-// includes: checks if string contains given substring
-const includesString = 'Hello';
-console.log(
-  `includes: '${concatString}' includes '${includesString}'? -> ${concatString.includes(includesString)} starting from position 5? -> ${concatString.includes(includesString, 5)}`,
-); // startPosition is optional, setting up start position of a string, so not full string is checked.
-
-// indexOf: returns index of the first occurrence of given substring, starting from given startPosition
-const indexOfString = 'world';
-console.log(
-  `indexOf: '${concatString}' index of '${indexOfString}'? -> ${concatString.indexOf(indexOfString)}, starting from position 5? -> ${concatString.indexOf(indexOfString, 5)}`,
-); // startPosition is optional, setting up start position of a string, so not full string is checked.
-
-// isWellFormed: checks if string is well-formed, meaning it is a valid string according to Unicode standard (why would you need this? I have no idea)
-const isWellFormedString = 'ab\uD800';
-console.log(
-  `isWellFormed: '${isWellFormedString}' is well-formed? -> ${isWellFormedString.isWellFormed()}, 'abc' is well-formed? -> ${'abc'.isWellFormed()}`,
+  `endsWith: '${string.slice(string.length - 20, string.length - 1)}' ends with 'console.'? -> ${string.endsWith('console.')} ends with 'test'? -> ${string.endsWith('test')}`,
 );
 
-// lastIndexOf: returns index of the last occurrence of given substring, starting from given startPosition
-const lastIndexOfString = 'world';
+// includes: checks if string contains substring
 console.log(
-  `lastIndexOf: '${concatString}' last index of '${lastIndexOfString}'? -> ${concatString.lastIndexOf(lastIndexOfString)}, starting from position 5? -> ${concatString.lastIndexOf(lastIndexOfString, 5)}`,
-); // startPosition is optional, setting up start position of a string, so not full string is checked.
-
-// length: really i have to explain this?
-console.log(`length: '${concatString}' length? -> ${concatString.length}`);
-
-// localeCompare: compares two strings in current locale, returns negative number if first string comes before second, 0 if they are equal, or positive number if first string comes after the second
-const localeCompareString = 'hello';
-console.log(
-  `localeCompare: '${localeCompareString}' compared to '${concatString}'? -> ${localeCompareString.localeCompare(concatString)} (negative = comes before, 0 = equal, positive = comes after)`,
+  `includes: '${string.slice(10, 40)}' includes 'playground'? -> ${string.includes('playground')} includes 'xyz'? -> ${string.includes('xyz')}`,
 );
 
-// match: returns array of all matching strings with g flag, does not accept negative indices
-const matchAllString = 'This is a big world, that is not a small world.';
-const matchString = 'world';
+// indexOf: finds first occurrence index of substring
+const testString = 'hello world, hello universe';
 console.log(
-  `match: '${matchAllString}' match '${matchString}'? -> ${matchAllString.match(new RegExp(matchString, 'g'))} (returns an array)`,
+  `indexOf: '${testString}' first 'hello' at index ${testString.indexOf('hello')}, starting from index 7? -> ${testString.indexOf('hello', 7)}`,
 );
 
-// matchAll: returns iterator of match objects (each containing full match, capture groups, index, and input string)
+// isWellFormed: validates string according to Unicode standard
+const validString = 'Hello, world!';
+const invalidString = 'ab\uD800'; // unpaired surrogate
 console.log(
-  `matchAll: '${matchAllString}' match all '${matchString}'? -> ${matchAllString.matchAll(new RegExp(matchString, 'g'))} (returns an iterator)`,
+  `isWellFormed: '${validString}' is well-formed? -> ${validString.isWellFormed()}, invalid surrogate? '${invalidString}' -> ${invalidString.isWellFormed()}`,
 );
 
-// normalize: returns new string with Unicode Normalization Form C (NFC) applied, does not accept negative indices
-const normalizeString1 = '\u0041\u006d\u00e9\u006c\u0069\u0065';
-const normalizeString2 = '\u0041\u006d\u0065\u0301\u006c\u0069\u0065';
+// lastIndexOf: finds last occurrence index of substring
+const lastIndexTestString = 'apple pie, apple juice, apple cake';
+console.log(
+  `lastIndexOf: '${lastIndexTestString}' last 'apple' at index ${lastIndexTestString.lastIndexOf('apple')}, before index 15? -> ${lastIndexTestString.lastIndexOf('apple', 15)}`,
+);
+
+// length: really have to explain this?
+console.log(`length: '${validString}' has length ${validString.length}, 'emoji😀' has length ${'emoji😀'.length}`);
+
+// localeCompare: compares strings using locale rules
+const str1 = 'apple';
+const str2 = 'banana';
+console.log(`localeCompare: '${str1}' vs '${str2}' = ${str1.localeCompare(str2)} (negative = comes first)`);
+
+// match: finds all matches of regex pattern (with g flag)
+const textWithMatches = 'cat dog cat bird cat';
+console.log(`match: '${textWithMatches}' match /cat/g -> ${JSON.stringify(textWithMatches.match(/cat/g))}`);
+
+// matchAll: returns iterator of all regex matches with details
+const matchIterator = [...'test123test456'.matchAll(/\d+/g)];
+console.log(
+  `matchAll: 'test123test456'.matchAll(/\\d+/g) found ${matchIterator.length} matches: ${matchIterator.map((m) => m[0]).join(', ')}`,
+);
+
+// normalize: normalizes Unicode characters to standard form
+const composed = 'e\u0301'; // e with combining acute
+const decomposed = 'é'; // precomposed é
 console.log(
   // @ts-ignore
-  `normalize: '${normalizeString1}' === '${normalizeString2}'? -> ${normalizeString1 === normalizeString2}, but normalized? -> ${normalizeString1.normalize('NFC') === normalizeString2.normalize('NFC')}`,
-); // normalizeString1 and normalizeString2 are different strings, but when normalized they are the same
-
-// padEnd: pads end of string with given string, does not accept negative index
-const padEndString = 'Hello';
-console.log(`padEnd: '${padEndString}' padded with '${padEndString}'? -> ${padEndString.padEnd(10, '!')}`);
-
-// padStart: pads start of string with given string, does not accept negative index
-const padStartString = 'Hello';
-console.log(`padStart: '${padStartString}' padded with '${padStartString}'? -> ${padStartString.padStart(10, '!')}`);
-
-// repeat: repeats string a given number of times, does not accept negative index
-const repeatString = 'Hello';
-console.log(`repeat: '${repeatString}' repeated 3 times? -> ${repeatString.repeat(3)}`);
-
-// replace: replaces first occurrence of given substring with given replacement string, does not accept negative index
-const replaceString = 'Hello';
-console.log(`replace: '${replaceString}' replaced 'Hello' with 'World'? -> ${replaceString.replace('Hello', 'World')}`);
-
-// replaceAll: replaces all occurrences of given substring with given replacement string, does not accept negative index
-const replaceAllString = 'Hello, world! This beautiful hello is for you!';
-console.log(
-  `replaceAll: '${replaceAllString}' replaced 'Hello' with 'World'? -> ${replaceAllString.replaceAll('Hello', 'World')}`,
+  `normalize: '${composed}' === '${decomposed}'? -> ${composed === decomposed}, after NFC? -> ${composed.normalize('NFC') === decomposed.normalize('NFC')}`,
 );
 
-// search: returns index of the first occurrence of given substring, starting from given startPosition, does not accept negative index
-const searchString = 'Hello, world! This beautiful hello is for you!';
-console.log(`search: '${searchString}' search 'beautiful'? -> ${searchString.search('beautiful')}}`);
+// padEnd: pads string end to specified length
+const padEndTest = 'Hi';
+console.log(`padEnd: '${padEndTest}' padded to length 10 with '*' -> '${padEndTest.padEnd(10, '*')}'`);
 
-// slice: returns a new string with a given start and end index, does not accept negative index
-const sliceString = 'Hello, world! This beautiful hello is for you!';
-console.log(`slice: '${sliceString}' sliced from 0 to 5? -> ${sliceString.slice(0, 5)}`);
+// padStart: pads string start to specified length
+const padStartTest = 'Hi';
+console.log(`padStart: '${padStartTest}' padded to length 10 with '*' -> '${padStartTest.padStart(10, '*')}'`);
 
-// split: returns an array of strings by splitting the string at the given separator, does not accept negative index
-const splitString = 'Hello, world! This beautiful hello is for you!';
-console.log(`split: '${splitString}' split by ' '? -> ${splitString.split(' ')} (returns an array)`);
+// repeat: repeats string n times
+const repeatTest = 'Ha';
+console.log(`repeat: '${repeatTest}' repeated 4 times -> '${repeatTest.repeat(4)}'`);
 
-// startsWith: checks if string starts with given substring, does not accept negative index
-const startsWithString = 'Hello, world!';
-console.log(`startsWith: '${startsWithString}' starts with 'Hello'? -> ${startsWithString.startsWith('Hello')}`);
+// replace: replaces first occurrence only
+const replaceTest = 'The quick brown fox jumps over the lazy dog';
+console.log(`replace: '${replaceTest}' replace first 'the' -> '${replaceTest.replace(/the/i, 'THE')}'`);
 
-// substring: returns a new string with a given start and end index, does not accept negative index
-const substringString = 'Hello, world! This beautiful hello is for you!';
-console.log(`substring: '${substringString}' substring from 0 to 5? -> ${substringString.substring(0, 5)}`);
+// replaceAll: replaces all occurrences
+const replaceAllTest = 'cat and cat and cat';
+console.log(`replaceAll: '${replaceAllTest}' replace all 'cat' -> '${replaceAllTest.replaceAll('cat', 'dog')}'`);
 
-// toLocaleLowerCase: returns new string with all characters converted to lowercase in current locale, respects locale-specific rules
-const toLocaleLowerCaseString = 'Hello, world!';
+// search: returns index of first regex match
+const searchTest = 'Visit Microsoft';
+console.log(`search: '${searchTest}' search /[Microsoft]/ -> index ${searchTest.search(/Microsoft/)}`);
+
+// slice: extracts substring by start and end indices (supports negative)
+const sliceTest = 'Hello, World!';
+console.log(`slice: '${sliceTest}' slice(0, 5) -> '${sliceTest.slice(0, 5)}', slice(-6) -> '${sliceTest.slice(-6)}'`);
+
+// split: splits string into array by separator
+const splitTest = 'apple,banana,orange';
+console.log(`split: '${splitTest}' split by ',' -> ${JSON.stringify(splitTest.split(','))}`);
+
+// startsWith: checks if string starts with substring
 console.log(
-  `toLocaleLowerCase: '${toLocaleLowerCaseString}' to lowercase? -> ${toLocaleLowerCaseString.toLocaleLowerCase()}`,
+  `startsWith: '${validString}' starts with 'Hello'? -> ${validString.startsWith('Hello')} starts with 'Hey'? -> ${validString.startsWith('Hey')}`,
 );
 
-// toLocaleUpperCase: returns new string with all characters converted to uppercase in current locale, respects locale-specific rules
-const toLocaleUpperCaseString = 'Hello, world!';
+// substring: extracts substring (similar to slice but no negative indices)
+const substringTest = 'Hello, World!';
 console.log(
-  `toLocaleUpperCase: '${toLocaleUpperCaseString}' to uppercase? -> ${toLocaleUpperCaseString.toLocaleUpperCase()}`,
+  `substring: '${substringTest}' substring(0, 5) -> '${substringTest.substring(0, 5)}', substring(7) -> '${substringTest.substring(7)}'`,
 );
 
-// toLowerCase: returns new string with all characters converted to lowercase using Unicode standard mapping, does not accept negative index
-const toLowerCaseString = 'Hello, world!';
-console.log(`toLowerCase: '${toLowerCaseString}' to lowercase? -> ${toLowerCaseString.toLowerCase()}`);
+// toLocaleLowerCase: converts to lowercase respecting locale rules (user device language)
+const localeLowerTest = 'HELLO WORLD';
+console.log(`toLocaleLowerCase: '${localeLowerTest}' to locale lowercase -> '${localeLowerTest.toLocaleLowerCase()}'`);
 
-// toUpperCase: returns new string with all characters converted to uppercase using Unicode standard mapping, does not accept negative index
-const toUpperCaseString = 'Hello, world!';
-console.log(`toUpperCase: '${toUpperCaseString}' to uppercase? -> ${toUpperCaseString.toUpperCase()}`);
+// toLocaleUpperCase: converts to uppercase respecting locale rules (user device language)
+const localeUpperTest = 'hello world';
+console.log(`toLocaleUpperCase: '${localeUpperTest}' to locale uppercase -> '${localeUpperTest.toLocaleUpperCase()}'`);
 
-// toString: returns new string with the same value as the original string, does not accept negative index
-const toStringString = 'Hello, world!';
-console.log(`toString: '${toStringString}' toString? -> ${toStringString.toString()}`);
+// toLowerCase: converts all characters to lowercase (Unicode standard mapping)
+const lowerTest = 'JavaScript IS Fun';
+console.log(`toLowerCase: '${lowerTest}' to lowercase -> '${lowerTest.toLowerCase()}'`);
 
-// trim: returns new string with the leading and trailing whitespace removed, does not accept negative index
-const trimString = '  Hello, world!  ';
-console.log(`trim: '${trimString}' trim? -> ${trimString.trim()}`);
+// toUpperCase: converts all characters to uppercase (Unicode standard mapping)
+const upperTest = 'JavaScript is fun';
+console.log(`toUpperCase: '${upperTest}' to uppercase -> '${upperTest.toUpperCase()}'`);
 
-// trimEnd: returns new string with the trailing whitespace removed, does not accept negative index
-const trimEndString = '  Hello, world!  ';
-console.log(`trimEnd: '${trimEndString}' trimEnd? -> ${trimEndString.trimEnd()}`);
+// toString: really have to explain this?
+const stringObj = 'Hello';
+console.log(`toString: stringObj.toString() -> '${stringObj.toString()}', typeof -> '${typeof stringObj.toString()}'`);
 
-// valueOf: returns the primitive value of the string, does not accept negative index
-const valueOfString = 'Hello, world!';
-console.log(`valueOf: '${valueOfString}' valueOf? -> ${valueOfString.valueOf()}`);
+// trim: removes leading and trailing whitespace (not just spaces)
+const trimTest = '   Hello, World!   ';
+console.log(`trim: '${trimTest}' trimmed -> '${trimTest.trim()}'`);
+
+// trimEnd: removes trailing whitespace only
+const trimEndTest = '   Hello, World!   ';
+console.log(`trimEnd: '${trimEndTest}' trimmed end -> '${trimEndTest.trimEnd()}'`);
+
+// trimStart: removes leading whitespace only
+const trimStartTest = '   Hello, World!   ';
+console.log(`trimStart: '${trimStartTest}' trimmed start -> '${trimStartTest.trimStart()}'`);
+
+// valueOf: returns primitive value (usually same as toString for strings)
+const valueOfTest = 'Hello, World!';
+console.log(
+  `valueOf: '${valueOfTest}' valueOf -> '${valueOfTest.valueOf()}', typeof -> '${typeof valueOfTest.valueOf()}'`,
+);
